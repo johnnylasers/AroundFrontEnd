@@ -1,8 +1,8 @@
 import React from 'react';
 import $ from 'jquery';
-import { Form, Icon, Input, Button, message} from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
 import { Link } from 'react-router-dom';
-import { API_ROOT } from "../constants";
+import { API_ROOT } from '../constants';
 import PropTypes from 'prop-types';
 
 
@@ -11,7 +11,6 @@ const FormItem = Form.Item;
 class NormalLoginForm extends React.Component {
     static propTypes = {
         handleLogin: PropTypes.func.isRequired,
-
     }
 
     handleSubmit = (e) => {
