@@ -1,6 +1,7 @@
 import React from 'react';
+import $ from 'jquery';
 
-import {GEO_OPTIONS, POS_KEY} from "../constants";
+import {API_ROOT, GEO_OPTIONS, POS_KEY, AUTH_PREFIX, TOKEN_KEY} from "../constants";
 import { Tabs, Button, Spin } from 'antd';
 
 const TabPane = Tabs.TabPane;
@@ -8,13 +9,15 @@ const operations = <Button>Extra Action</Button>;
 
 export class Home extends React.Component {
     state = {
-        loadingGeolocation: false
+        posts: [],
+        error: '',
+        loadingGeolocation: false,
     }
 
     componentDidMount() {
         if ("geolocation" in navigator) {
             /* geolocation is available */
-            this.setState({loadingGeolocation: true});
+            this.setState({loadingGeolocation: true, error: ''});
             navigator.geolocation.getCurrentPosition(
                 this.onSuccessLoadGeolocation,
                 this.onFailLoadGeolocation,
@@ -22,28 +25,56 @@ export class Home extends React.Component {
             );
         } else {
             /* geolocation IS NOT available */
-            console.log("");
+            this.setState({error: "Your browser does not support Geolocation"});
+
         }
     }
 
     onSuccessLoadGeolocation = (position) => {
         console.log(position);
-        this.setState({loadingGeolocation: false});
+        this.setState({loadingGeolocation: false, error:''});
         const {latitude : lat, longitude : lon} = position.coords;
         localStorage.setItem(POS_KEY, JSON.stringify({lat : lat, lon : lon}));
+        this.loadNearbyPosts();
     }
 
     onFailLoadGeolocation = () => {
-        this.setState({loadingGeolocation: false});
+        this.setState({loadingGeolocation: false, error: "Failed to load Geolocation"});
     }
 
     getGalleryPanelContent = () =>  {
-        if (this.state.loadingGeolocation) {
-            //show spin
-            return <Spin tip="Loading Geolocation...."/>
+        if (this.state.error) {
+            return <div>{this.state.error}</div>
+        } else if (this.state.loadingGeolocation) {
+            return <Spin tip="Loading geo location ..."/>
+        } else if (this.state.loadingPosts) {
+            return <Spin tip="Loading posts ..."/>
         }
         return null;
     }
+
+    loadNearbyPosts = () => {
+        //const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
+        const {lat, lon} = {"lat":37.5629917,"lon":-122.32552539999998};
+        this.setState({ loadingPosts: true });
+        $.ajax({
+            url: `${API_ROOT}/search?lat=${lat}&lon=${lon}&range=20`,
+            method: 'GET',
+            headers: {
+                'Authorization': `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
+            },
+        }).then((response) => {
+            console.log(response);
+            this.setState({ loadingPosts: false });
+            this.setState({posts: response, error: ''});
+        }, (error) => {
+            this.setState({error: error.responseText, loadingPosts: false});
+        }).catch((error) => {
+            this.setState({error: error});
+        });
+    }
+
+
 
     render() {
 
