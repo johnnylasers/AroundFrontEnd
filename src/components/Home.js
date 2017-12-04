@@ -3,6 +3,8 @@ import $ from 'jquery';
 
 import {API_ROOT, GEO_OPTIONS, POS_KEY, AUTH_PREFIX, TOKEN_KEY} from "../constants";
 import { Tabs, Button, Spin } from 'antd';
+import { Gallery } from "./Gallery";
+
 
 const TabPane = Tabs.TabPane;
 const operations = <Button>Extra Action</Button>;
@@ -49,6 +51,19 @@ export class Home extends React.Component {
             return <Spin tip="Loading geo location ..."/>
         } else if (this.state.loadingPosts) {
             return <Spin tip="Loading posts ..."/>
+        } else if (this.state.posts) {
+            const images = this.state.posts.map((post) => {
+                return {
+                    user: post.user,
+                    src: post.url,
+                    thumbnail: post.url,
+                    thumbnailWidth: 400,
+                    thumbnailHeight: 300,
+                    caption: post.message,
+                };
+            });
+            console.log(images);
+            return <Gallery images={images}/>
         }
         return null;
     }
@@ -57,20 +72,21 @@ export class Home extends React.Component {
         //const {lat, lon} = JSON.parse(localStorage.getItem(POS_KEY));
         const {lat, lon} = {"lat":37.5629917,"lon":-122.32552539999998};
         this.setState({ loadingPosts: true });
-        $.ajax({
+        return $.ajax({
             url: `${API_ROOT}/search?lat=${lat}&lon=${lon}&range=20`,
             method: 'GET',
             headers: {
-                'Authorization': `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`
+                Authorization: `${AUTH_PREFIX} ${localStorage.getItem(TOKEN_KEY)}`,
             },
         }).then((response) => {
+            this.setState({ posts: response, error: '' });
             console.log(response);
-            this.setState({ loadingPosts: false });
-            this.setState({posts: response, error: ''});
         }, (error) => {
-            this.setState({error: error.responseText, loadingPosts: false});
+            this.setState({ error: error.responseText });
+        }).then(() => {
+            this.setState({ loadingPosts: false });
         }).catch((error) => {
-            this.setState({error: error});
+            console.log(error);
         });
     }
 
