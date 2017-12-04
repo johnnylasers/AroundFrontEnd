@@ -21,7 +21,7 @@ export class Gallery extends Component {
         const images = this.props.images.map((image) => {
             return {
                 ...image,
-                customOverlay: ( //生成image之后，再加这些overlay的config
+                customOverlay: ( //生成image之后，再加这些overlay的config. 点背景就可以cancel掉
                     <div style={captionStyle}>
                         <div>{`${image.user}: ${image.caption}`}</div>
                     </div>
