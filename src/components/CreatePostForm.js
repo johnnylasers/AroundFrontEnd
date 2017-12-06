@@ -4,6 +4,21 @@ const FormItem = Form.Item;
 
 class CreatePostForm extends React.Component {
 
+    normFile = (e) => {
+        console.log('Upload event:', e);
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e && e.fileList;
+    }
+
+    beforeUpload = () => {
+        return false;
+    }
+
+    getWrappedForm = () => {
+        return this.props.form;
+    }
     render() {
 
         const {getFieldDecorator} = this.props.form;
@@ -52,4 +67,5 @@ class CreatePostForm extends React.Component {
     };
 }
 
+//with wrapper, enhanced form
 export const WrappedCreatePostForm = Form.create()(CreatePostForm);
