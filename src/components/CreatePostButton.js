@@ -2,7 +2,6 @@ import React from 'react';
 import $ from 'jquery';
 import { Modal, Button, message } from 'antd';
 import { WrappedCreatePostForm } from './CreatePostForm';
-import { WrappedAroundMap } from "./AroundMap";
 import { API_ROOT, TOKEN_KEY, AUTH_PREFIX, POS_KEY } from '../constants';
 import { PropTypes } from 'prop-types';
 

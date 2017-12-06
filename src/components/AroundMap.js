@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {POS_KEY} from "../constants";
 
 import {withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow} from 'react-google-maps';
 
@@ -16,14 +16,14 @@ class AroundMap extends React.Component {
     }
 
     render() {
-
+        const pos = JSON.parse(localStorage.getItem(POS_KEY));
 
         return (
             <GoogleMap
-                defaultZoom={3}
-                defaultCenter={{ lat: -34.397, lng: 150.644 }}
+                defaultZoom={11}
+                defaultCenter={{ lat: pos.lat, lng: pos.lon }}
             >
-            <Marker position={{ lat: -34.397, lng: 150.644 }} onClick={this.onToggleOpen}>
+            <Marker position={{ lat: pos.lat, lng: pos.lon }} onClick={this.onToggleOpen}>
                 {this.state.isOpen ?
                     <InfoWindow onCloseClick={this.props.onToggleOpen}>
                         <div>Helloooooo</div>
